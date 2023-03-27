@@ -1,0 +1,26 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-conversion
+      author: Oleg Shukyurov
+      changes:
+        - createTable:
+            tableName: conversion
+            columns:
+              - column:
+                  name: conversion_id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: symbol
+                  type: varchar(255)
+              - column:
+                  name: rate
+                  type: decimal(19, 2)
+              - column:
+                  name: rate_on_previous_close
+                  type: decimal(19, 2)
+              - column:
+                  name: made_at
+                  type: timestamp

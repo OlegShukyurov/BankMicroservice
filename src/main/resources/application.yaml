@@ -1,0 +1,18 @@
+spring:
+  liquibase:
+    enabled: true
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: 'jdbc:postgresql://localhost:5432/bank_microservice_db'
+    username: postgres
+    password: postgres
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        show_sql: true
+
+
+
