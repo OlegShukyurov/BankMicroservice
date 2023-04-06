@@ -1,4 +1,4 @@
-package model;
+package com.shukyurov.BankMicroservice.model;
 
 import lombok.Getter;
 

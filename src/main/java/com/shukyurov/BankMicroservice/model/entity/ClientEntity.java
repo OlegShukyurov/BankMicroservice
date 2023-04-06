@@ -1,4 +1,4 @@
-package model.entity;
+package com.shukyurov.BankMicroservice.model.entity;
 
 import lombok.Data;
 

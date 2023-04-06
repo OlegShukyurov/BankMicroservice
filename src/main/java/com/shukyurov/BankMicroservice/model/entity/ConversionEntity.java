@@ -1,20 +1,22 @@
-package model.entity;
+package com.shukyurov.BankMicroservice.model.entity;
 
 import lombok.Data;
-import model.ExchangeType;
+import com.shukyurov.BankMicroservice.model.ExchangeType;
+import org.springframework.data.cassandra.core.mapping.PrimaryKeyClass;
+import org.springframework.data.cassandra.core.mapping.PrimaryKeyColumn;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+import static org.springframework.data.cassandra.core.cql.PrimaryKeyType.PARTITIONED;
+
 @Data
-@Entity
 @Table(name = "conversion")
+@PrimaryKeyClass
 public class ConversionEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "conversion_id")
+    @PrimaryKeyColumn(name = "id", type = PARTITIONED)
     private Long id;
 
     @Column(name = "symbol")

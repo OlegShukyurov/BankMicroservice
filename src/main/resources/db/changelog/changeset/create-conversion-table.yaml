@@ -7,20 +7,20 @@ databaseChangeLog:
             tableName: conversion
             columns:
               - column:
-                  name: conversion_id
+                  name: id
                   type: bigint
-                  autoIncrement: true
                   constraints:
                     primaryKey: true
               - column:
                   name: symbol
-                  type: varchar(255)
+                  type: varchar
               - column:
                   name: rate
-                  type: decimal(19, 2)
+                  type: decimal
               - column:
                   name: rate_on_previous_close
-                  type: decimal(19, 2)
+                  type: decimal
               - column:
                   name: made_at
                   type: timestamp
+

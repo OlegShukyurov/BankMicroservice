@@ -1,4 +1,4 @@
-package model.dto;
+package com.shukyurov.BankMicroservice.model.dto;
 
 import lombok.Getter;
 import lombok.Setter;

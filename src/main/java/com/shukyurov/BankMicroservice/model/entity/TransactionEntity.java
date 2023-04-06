@@ -1,8 +1,8 @@
-package model.entity;
+package com.shukyurov.BankMicroservice.model.entity;
 
 import lombok.Data;
-import model.CurrencyType;
-import model.ExpenseCategoryType;
+import com.shukyurov.BankMicroservice.model.CurrencyType;
+import com.shukyurov.BankMicroservice.model.ExpenseCategoryType;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
