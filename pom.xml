@@ -15,6 +15,7 @@
 	<description>Bank microservice that accepts transactions</description>
 	<properties>
 		<java.version>11</java.version>
+		<cassandra.version>4.14.0</cassandra.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -27,6 +28,21 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-cassandra</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.datastax.oss</groupId>
+			<artifactId>java-driver-core</artifactId>
+			<version>${cassandra.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.datastax.oss</groupId>
+			<artifactId>java-driver-query-builder</artifactId>
+			<version>${cassandra.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.datastax.oss</groupId>
+			<artifactId>java-driver-mapper-runtime</artifactId>
+			<version>${cassandra.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -61,7 +77,7 @@
 		<dependency>
 			<groupId>org.liquibase.ext</groupId>
 			<artifactId>liquibase-cassandra</artifactId>
-			<version>4.14.0</version>
+			<version>${cassandra.version}</version>
 		</dependency>
 	</dependencies>
 

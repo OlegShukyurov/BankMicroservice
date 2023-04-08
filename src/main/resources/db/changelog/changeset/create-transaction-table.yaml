@@ -7,7 +7,7 @@ databaseChangeLog:
             tableName: transaction
             columns:
               - column:
-                  name: transaction_id
+                  name: id
                   type: bigint
                   autoIncrement: true
                   constraints:
@@ -18,14 +18,14 @@ databaseChangeLog:
                   constraints:
                     foreignKeyName: client_transaction_fk
                     referencedTableName: client
-                    referencedColumnNames: client_id
+                    referencedColumnNames: id
               - column:
                   name: limit_id
                   type: bigint
                   constraints:
                     foreignKeyName: limit_transaction_fk
                     referencedTableName: limit
-                    referencedColumnNames: limit_id
+                    referencedColumnNames: id
                     onDelete: SET NULL
               - column:
                   name: account_from

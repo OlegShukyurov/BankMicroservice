@@ -15,4 +15,5 @@ public class ConversionDTO {
     private BigDecimal rate;
 
     private LocalDateTime timestamp;
+
 }

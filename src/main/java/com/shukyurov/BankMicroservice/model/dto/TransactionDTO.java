@@ -10,9 +10,9 @@ import java.time.LocalDateTime;
 @Setter
 public class TransactionDTO {
 
-    private int account_from;
+    private Long account_from;
 
-    private int account_to;
+    private Long account_to;
 
     private String currency_shortname;
 
@@ -21,4 +21,5 @@ public class TransactionDTO {
     private String expense_category;
 
     private LocalDateTime datetime;
+
 }

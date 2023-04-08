@@ -73,4 +73,5 @@ public class DatabaseConfig {
 
         return liquibase;
     }
+
 }

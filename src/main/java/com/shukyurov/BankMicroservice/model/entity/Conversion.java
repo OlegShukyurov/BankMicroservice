@@ -13,21 +13,18 @@ import java.time.LocalDateTime;
 @Data
 @Table(name = "conversion")
 @PrimaryKeyClass
-public class ConversionEntity {
+public class Conversion {
 
     @PrimaryKeyColumn(type = PrimaryKeyType.PARTITIONED)
     private Long id;
 
-    @Column(name = "symbol")
-    @Enumerated(EnumType.STRING)
-    private ExchangeType conversionSymbol;
+    private BigDecimal rate;
 
-    @Column(name = "rate")
-    private BigDecimal conversionRate;
-
-    @Column(name = "rate_on_previously_close")
     private BigDecimal rateOnPreviousClose;
 
-    @Column(name = "made_at")
     private LocalDateTime madeAt;
+
+    @Enumerated(EnumType.STRING)
+    private ExchangeType symbol;
+
 }

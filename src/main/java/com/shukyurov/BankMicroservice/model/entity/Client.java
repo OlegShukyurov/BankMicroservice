@@ -8,19 +8,18 @@ import java.util.List;
 @Data
 @Entity
 @Table(name = "client")
-public class ClientEntity {
+public class Client {
 
     @Id
-    @Column(name = "client_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "bank_account_number")
     private int bankAccountNumber;
 
     @OneToMany(mappedBy = "transactionClient")
-    private List<TransactionEntity> clientTransactions;
+    private List<Transaction> clientTransactions;
 
     @OneToMany(mappedBy = "limitClient")
-    private List<LimitEntity> clientLimits;
+    private List<Limit> clientLimits;
+
 }
