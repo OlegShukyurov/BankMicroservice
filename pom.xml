@@ -16,7 +16,21 @@
 	<properties>
 		<java.version>11</java.version>
 		<cassandra.version>4.14.0</cassandra.version>
+		<spring.cloud.version>2021.0.5</spring.cloud.version>
 	</properties>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-dependencies</artifactId>
+				<version>${spring.cloud.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
 	<dependencies>
 		<dependency>
 			<groupId>com.datastax.jdbc</groupId>
@@ -35,14 +49,9 @@
 			<version>${cassandra.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>com.datastax.oss</groupId>
-			<artifactId>java-driver-query-builder</artifactId>
-			<version>${cassandra.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.datastax.oss</groupId>
-			<artifactId>java-driver-mapper-runtime</artifactId>
-			<version>${cassandra.version}</version>
+			<groupId>org.modelmapper</groupId>
+			<artifactId>modelmapper</artifactId>
+			<version>2.4.5</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -79,6 +88,33 @@
 			<artifactId>liquibase-cassandra</artifactId>
 			<version>${cassandra.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-openfeign</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.github.openfeign</groupId>
+			<artifactId>feign-okhttp</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.github.openfeign</groupId>
+			<artifactId>feign-jackson</artifactId>
+		</dependency>
+		<!--		<dependency>-->
+		<!--			<groupId>com.datastax.oss</groupId>-->
+		<!--			<artifactId>java-driver-query-builder</artifactId>-->
+		<!--			<version>${cassandra.version}</version>-->
+		<!--		</dependency>-->
+		<!--		<dependency>-->
+		<!--			<groupId>com.datastax.oss</groupId>-->
+		<!--			<artifactId>java-driver-mapper-runtime</artifactId>-->
+		<!--			<version>${cassandra.version}</version>-->
+		<!--		</dependency>-->
+		<!--		<dependency>-->
+		<!--			<groupId>org.springframework.data</groupId>-->
+		<!--			<artifactId>spring-data-cassandra</artifactId>-->
+		<!--			<version>4.0.0</version>-->
+		<!--		</dependency>-->
 	</dependencies>
 
 	<build>

@@ -5,12 +5,19 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.autoconfigure.liquibase.LiquibaseAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.openfeign.EnableFeignClients;
+import org.springframework.data.cassandra.repository.config.EnableCassandraRepositories;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication(exclude = {DataSourceAutoConfiguration.class, LiquibaseAutoConfiguration.class})
 @EnableConfigurationProperties
+@EnableFeignClients
+@EnableScheduling
+@EnableCassandraRepositories
 public class BankMicroserviceApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(BankMicroserviceApplication.class, args);
 	}
+
 }
