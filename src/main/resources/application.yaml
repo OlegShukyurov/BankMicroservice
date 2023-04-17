@@ -1,0 +1,36 @@
+spring:
+  datasource:
+    postgres:
+      driver-class-name: org.postgresql.Driver
+      jdbcUrl: jdbc:postgresql://localhost:5432/bank_microservice_db
+      username: postgres
+      password: postgres
+      liquibase:
+        change-log: classpath:/db/changelog/db.changelog-postgres.yaml
+        drop-first: true
+        enabled: true
+    cassandra:
+      jdbcUrl: jdbc:cassandra://127.0.0.1:9042/my_keyspace;DefaultKeyspace=my_keyspace
+      driver-class-name: com.simba.cassandra.jdbc42.Driver
+      liquibase:
+        change-log: classpath:/db/changelog/db.changelog-cassandra.yaml
+        enabled: true
+        drop-first: true
+  data:
+    cassandra:
+      contact-points: 127.0.0.1
+      port: 9042
+      keyspace-name: my_keyspace
+      local-datacenter: datacenter1
+  jpa:
+    hibernate:
+      ddl-auto: none
+      show_sql: true
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+  client:
+    apikey: 5baec05e9109414fbd8c6f41f9ab0d87
+    url: https://api.twelvedata.com/
+    cron: 0 0 16 * * *
+
+
+

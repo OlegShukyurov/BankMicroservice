@@ -1,0 +1,19 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-client
+      author: Oleg Shukyurov
+      changes:
+        - createTable:
+            tableName: client
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: bank_account_number
+                  type: int
+                  constraints:
+                    unique: true
