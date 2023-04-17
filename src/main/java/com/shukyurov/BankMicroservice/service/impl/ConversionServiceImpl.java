@@ -22,7 +22,7 @@ import java.util.UUID;
 public class ConversionServiceImpl implements ConversionService {
 
     @Value("${spring.client.apikey}")
-    private String API_KEY;
+    private String apiKey;
 
     private final ConversionMapper conversionMapper;
     private final ConversionClient conversionClient;
@@ -44,11 +44,13 @@ public class ConversionServiceImpl implements ConversionService {
     @PostConstruct
     @Scheduled(cron = "${spring.client.cron}")
     private void saveAllConversions() {
+        System.out.println("Save all starts");
         Arrays.stream(ExchangeType.values())
-                .map(exchangeType -> getConversionDTO(exchangeType.getSymbol(), API_KEY))
+                .map(exchangeType -> getConversionDTO(exchangeType.getSymbol(), apiKey))
                 .map(conversionMapper::toEntity)
                 .peek(this::enrichConversion)
                 .forEachOrdered(conversionRepository::save);
+        System.out.println("Save all ends");
     }
 
     private void enrichConversion(Conversion conversion) {

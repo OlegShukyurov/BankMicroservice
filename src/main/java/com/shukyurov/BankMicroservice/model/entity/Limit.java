@@ -10,7 +10,7 @@ import java.util.List;
 
 @Data
 @Entity
-@Table(name = "limit")
+@Table
 public class Limit {
 
     @Id

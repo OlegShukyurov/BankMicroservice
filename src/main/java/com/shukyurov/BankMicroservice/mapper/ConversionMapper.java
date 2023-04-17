@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 public class ConversionMapper extends AbstractMapper<Conversion, ConversionDTO> {
 
     public ConversionMapper() {
-        super(Conversion.class, ConversionDTO.class);
+        super(new ModelMapper(), Conversion.class, ConversionDTO.class);
     }
 
     @Override

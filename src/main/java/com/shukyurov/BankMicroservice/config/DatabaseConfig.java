@@ -15,10 +15,10 @@ import javax.sql.DataSource;
 public class DatabaseConfig {
 
     @Value("${spring.datasource.cassandra.jdbcUrl}")
-    private String CASSANDRA_JDBC_URL;
+    private String cassandraUrl;
 
     @Value("${spring.datasource.cassandra.driver-class-name}")
-    private String CASSANDRA_DRIVER_CLASS_NAME;
+    private String cassandraDriver;
 
     @Primary
     @Bean
@@ -30,13 +30,13 @@ public class DatabaseConfig {
     @Bean
     public DataSource cassandraDataSource() {
         try {
-            Class.forName(CASSANDRA_DRIVER_CLASS_NAME);
+            Class.forName(cassandraDriver);
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
         com.simba.cassandra.jdbc42.DataSource cassandraDataSource = new com.simba.cassandra.jdbc42.DataSource();
 
-        cassandraDataSource.setURL(CASSANDRA_JDBC_URL);
+        cassandraDataSource.setURL(cassandraUrl);
 
         return cassandraDataSource;
     }

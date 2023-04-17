@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Data
-@Table(value = "conversion")
+@Table
 public class Conversion {
 
     private UUID id;
