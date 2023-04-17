@@ -100,21 +100,6 @@
 			<groupId>io.github.openfeign</groupId>
 			<artifactId>feign-jackson</artifactId>
 		</dependency>
-		<!--		<dependency>-->
-		<!--			<groupId>com.datastax.oss</groupId>-->
-		<!--			<artifactId>java-driver-query-builder</artifactId>-->
-		<!--			<version>${cassandra.version}</version>-->
-		<!--		</dependency>-->
-		<!--		<dependency>-->
-		<!--			<groupId>com.datastax.oss</groupId>-->
-		<!--			<artifactId>java-driver-mapper-runtime</artifactId>-->
-		<!--			<version>${cassandra.version}</version>-->
-		<!--		</dependency>-->
-		<!--		<dependency>-->
-		<!--			<groupId>org.springframework.data</groupId>-->
-		<!--			<artifactId>spring-data-cassandra</artifactId>-->
-		<!--			<version>4.0.0</version>-->
-		<!--		</dependency>-->
 	</dependencies>
 
 	<build>

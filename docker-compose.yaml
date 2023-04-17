@@ -1,0 +1,48 @@
+version: '3.9'
+
+services:
+  app:
+    build: ./
+    container_name: java-app
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+      - cassandra
+    environment:
+      SPRING_DATASOURCE_POSTGRES_JDBCURL: jdbc:postgresql://postgres:5432/bank_microservice_db
+      SPRING_DATASOURCE_POSTGRES_USERNAME: postgres
+      SPRING_DATASOURCE_POSTGRES_PASSWORD: postgres
+      SPRING_DATASOURCE_POSTGRES_LIQUIBASE_CHANGELOG: classpath:/db/changelog/db.changelog-postgres.yaml
+      SPRING_DATASOURCE_POSTGRES_LIQUIBASE_DROPFIRST: "true"
+      SPRING_DATASOURCE_POSTGRES_LIQUIBASE_ENABLED: "true"
+      SPRING_DATASOURCE_CASSANDRA_JDBCURL: jdbc:cassandra://cassandra:9042/my_keyspace;DefaultKeyspace=my_keyspace
+      SPRING_DATASOURCE_CASSANDRA_DRIVERCLASSNAME: com.simba.cassandra.jdbc42.Driver
+      SPRING_DATASOURCE_CASSANDRA_LIQUIBASE_CHANGELOG: classpath:/db/changelog/db.changelog-cassandra.yaml
+      SPRING_DATASOURCE_CASSANDRA_LIQUIBASE_DROPFIRST: "true"
+      SPRING_DATASOURCE_CASSANDRA_LIQUIBASE_ENABLED: "true"
+      SPRING_DATA_CASSANDRA_CONTACTPOINTS: cassandra
+      SPRING_DATA_CASSANDRA_PORT: "9042"
+      SPRING_DATA_CASSANDRA_KEYSPACE: my_keyspace
+      SPRING_DATA_CASSANDRA_LOCALDATACENTER: datacenter1
+      SPRING_JPA_HIBERNATE_DDLAUTO: none
+      SPRING_JPA_HIBERNATE_SHOWSQL: "true"
+      SPRING_JPA_DATABASEPLATFORM: org.hibernate.dialect.PostgreSQLDialect
+      SPRING_CLIENT_APIKEY: "5baec05e9109414fbd8c6f41f9ab0d87"
+      SPRING_CLIENT_URL: "https://api.twelvedata.com/"
+      SPRING_CLIENT_CRON: "0 0 16 * * *"
+
+  postgres:
+    image: postgres:13
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=bank_microservice_db
+      - POSTGRES_PASSWORD=postgres
+
+  cassandra:
+    image: cassandra
+    environment:
+      - CASSANDRA_BROADCAST_ADDRESS=cassandra
+      - CASSANDRA_BROADCAST_RPC_ADDRESS=cassandra
+#    volumes:
+#      - ./cassandra-data:/var/lib/cassandra
