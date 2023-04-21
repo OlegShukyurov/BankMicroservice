@@ -1,0 +1,43 @@
+version: '3.9'
+
+services:
+  app:
+    build:
+      context: services/app
+      dockerfile: Dockerfile
+    container_name: java-app
+    command: ["./wait-for-it.sh", "java", "-jar", "backend.jar"]
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+      - cassandra
+    environment:
+      SPRING_DATASOURCE_POSTGRES_JDBCURL: jdbc:postgresql://postgres:5432/bank_microservice_db
+      SPRING_DATASOURCE_CASSANDRA_JDBCURL: jdbc:cassandra://cassandra:9042/my_keyspace;DefaultKeyspace=my_keyspace
+      SPRING_DATA_CASSANDRA_CONTACTPOINTS: cassandra
+
+  postgres:
+    build:
+      context: services/postgres
+      dockerfile: Dockerfile
+    container_name: postgres-db
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=bank_microservice_db
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - "db-data:/var/lib/postgresql/data"
+
+  cassandra:
+    ports:
+      - "9042:9042"
+    build:
+      context: services/cassandra
+      dockerfile: Dockerfile
+    container_name: cassandra-db
+    volumes:
+      - "db-data:/var/lib/cassandra/data"
+
+volumes:
+  db-data:
