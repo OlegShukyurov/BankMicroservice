@@ -16,6 +16,7 @@
 	<properties>
 		<java.version>11</java.version>
 		<cassandra.version>4.14.0</cassandra.version>
+		<liquibase.version>4.14.0</liquibase.version>
 		<spring.cloud.version>2021.0.5</spring.cloud.version>
 	</properties>
 
@@ -36,8 +37,8 @@
 			<groupId>com.datastax.jdbc</groupId>
 			<artifactId>CassandraJDBC42</artifactId>
 			<version>4.2</version>
-			<scope>system</scope>
-			<systemPath>${basedir}/lib/CassandraJDBC42.jar</systemPath>
+<!--			<scope>system</scope>-->
+<!--			<systemPath>${pom.basedir}/lib/CassandraJDBC42.jar</systemPath>-->
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -82,11 +83,12 @@
 		<dependency>
 			<groupId>org.liquibase</groupId>
 			<artifactId>liquibase-core</artifactId>
+			<version>${liquibase.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.liquibase.ext</groupId>
 			<artifactId>liquibase-cassandra</artifactId>
-			<version>${cassandra.version}</version>
+			<version>${liquibase.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
@@ -115,6 +117,11 @@
 						</exclude>
 					</excludes>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.liquibase.ext</groupId>
+				<artifactId>liquibase-sdk-maven-plugin</artifactId>
+				<version>0.10.20</version>
 			</plugin>
 		</plugins>
 	</build>
