@@ -7,7 +7,7 @@ import com.shukyurov.BankMicroservice.model.dto.ConversionDTO;
 import com.shukyurov.BankMicroservice.model.entity.Conversion;
 import com.shukyurov.BankMicroservice.repository.ConversionRepository;
 import com.shukyurov.BankMicroservice.service.ConversionService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -19,6 +19,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class ConversionServiceImpl implements ConversionService {
 
     @Value("${spring.client.apikey}")
@@ -27,14 +28,6 @@ public class ConversionServiceImpl implements ConversionService {
     private final ConversionMapper conversionMapper;
     private final ConversionClient conversionClient;
     private final ConversionRepository conversionRepository;
-
-    @Autowired
-    public ConversionServiceImpl(ConversionMapper conversionMapper, ConversionClient conversionClient,
-                                 ConversionRepository conversionRepository) {
-        this.conversionMapper = conversionMapper;
-        this.conversionClient = conversionClient;
-        this.conversionRepository = conversionRepository;
-    }
 
     @Override
     public ConversionDTO getConversionDTO(String symbol, String apikey) {
