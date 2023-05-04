@@ -1,0 +1,33 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-limits
+      author: Oleg Shukyurov
+      changes:
+        - createTable:
+            tableName: limits
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: client_id
+                  type: bigint
+                  constraints:
+                    foreignKeyName: client_limit_fk
+                    referencedTableName: clients
+                    referencedColumnNames: id
+              - column:
+                  name: limit_sum
+                  type: decimal(19, 2)
+              - column:
+                  name: remaining_month_limit
+                  type: decimal(19, 2)
+              - column:
+                  name: limit_date_time
+                  type: timestamp
+              - column:
+                  name: limit_currency_shortname
+                  type: varchar(255)

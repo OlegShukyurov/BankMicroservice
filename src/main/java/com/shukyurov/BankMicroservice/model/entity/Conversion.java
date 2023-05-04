@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Data
-@Table
+@Table(value = "conversions")
 public class Conversion {
 
     private UUID id;
@@ -23,7 +23,6 @@ public class Conversion {
 
     @Column(value = "rate_on_previous_close")
     private BigDecimal rateOnPreviousClose;
-
 
     @PrimaryKeyColumn(name = "made_at", type = PrimaryKeyType.CLUSTERED, ordering = Ordering.DESCENDING)
     private LocalDateTime madeAt;

@@ -15,10 +15,11 @@
 	<description>Bank microservice that accepts transactions</description>
 	<properties>
 		<java.version>11</java.version>
-		<cassandra.version>4.14.0</cassandra.version>
 		<liquibase.version>4.14.0</liquibase.version>
 		<spring.cloud.version>2021.0.5</spring.cloud.version>
 		<testcontainers.version>1.18.0</testcontainers.version>
+		<mapper.version>2.4.5</mapper.version>
+		<cassandra.driver.version>4.2</cassandra.driver.version>
 	</properties>
 
 	<dependencyManagement>
@@ -37,7 +38,7 @@
 		<dependency>
 			<groupId>com.datastax.jdbc</groupId>
 			<artifactId>CassandraJDBC42</artifactId>
-			<version>4.2</version>
+			<version>${cassandra.driver.version}</version>
 <!--			<scope>system</scope>-->
 <!--			<systemPath>${pom.basedir}/lib/CassandraJDBC42.jar</systemPath>-->
 		</dependency>
@@ -48,12 +49,12 @@
 		<dependency>
 			<groupId>com.datastax.oss</groupId>
 			<artifactId>java-driver-core</artifactId>
-			<version>${cassandra.version}</version>
+			<version>${liquibase.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.modelmapper</groupId>
 			<artifactId>modelmapper</artifactId>
-			<version>2.4.5</version>
+			<version>${mapper.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -142,11 +143,6 @@
 						</exclude>
 					</excludes>
 				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.liquibase.ext</groupId>
-				<artifactId>liquibase-sdk-maven-plugin</artifactId>
-				<version>0.10.20</version>
 			</plugin>
 		</plugins>
 	</build>

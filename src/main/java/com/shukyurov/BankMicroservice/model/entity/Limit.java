@@ -1,30 +1,37 @@
 package com.shukyurov.BankMicroservice.model.entity;
 
-import lombok.Data;
+import lombok.*;
 import com.shukyurov.BankMicroservice.model.CurrencyType;
 
 import javax.persistence.*;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
-@Table
+@Table(name = "limits")
 public class Limit {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private boolean limitExceeded;
-
+    @NotNull(message = "Sum should not be null")
+    @Min(value = 0, message = "Sum of limit should be equals or greater than 0")
     private BigDecimal limitSum;
 
+    @NotNull(message = "Remaining month limit should not be null")
     private BigDecimal remainingMonthLimit;
 
     private LocalDateTime limitDateTime;
 
+    @NotNull(message = "Currency type should not be null")
     @Enumerated(EnumType.STRING)
     private CurrencyType limitCurrencyShortname;
 
