@@ -13,15 +13,20 @@ import javax.validation.constraints.Pattern;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class LimitDTO {
+public class LimitRequestDTO {
 
     @NotNull(message = "Limit sum should not be null")
     @Min(value = 0, message = "Sum of limit should be greater than 0")
     private Double limit_sum;
 
     @NotNull(message = "Currency type should not be null")
-    @Pattern(regexp = "(^USD$)|(^KZT$)|(^RUB$)",
-            message = "Currency shortname should be in these variants: 1) 'RUB' 2) 'KZT' 3) 'USD'")
+    @Pattern(regexp = "(^USD$)",
+            message = "Currency shortname should be : 'USD'")
     private String limit_currency_shortname;
+
+    @NotNull(message = "Expense category should not be null")
+    @Pattern(regexp = "(^product$)|(^service$)",
+            message = "Expense category should be in these variants : 1) 'product' 2) 'service'")
+    private String limit_expense_category;
 
 }

@@ -1,7 +1,8 @@
 package com.shukyurov.BankMicroservice.service.impl;
 
-import com.shukyurov.BankMicroservice.exception.ClientsNotFoundException;
 import com.shukyurov.BankMicroservice.exception.ResourceAlreadyExistsException;
+import com.shukyurov.BankMicroservice.model.CurrencyType;
+import com.shukyurov.BankMicroservice.model.ExpenseCategoryType;
 import com.shukyurov.BankMicroservice.model.dto.ClientDTO;
 import com.shukyurov.BankMicroservice.model.entity.Client;
 import com.shukyurov.BankMicroservice.model.entity.Limit;
@@ -16,6 +17,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -35,10 +38,10 @@ public class ClientServiceImpl implements ClientService {
         if (clientRepository.findByBankAccountNumber(clientDTO.getBankAccountNumber()).isPresent()) {
             throw new ResourceAlreadyExistsException("Client");
         }
-        Client client = clientRepository.save(mapToEntity(clientDTO));
-        enrichClient(client);
+        Client savedClient = clientRepository.save(mapToEntity(clientDTO));
+        enrichClient(savedClient);
 
-        return mapToDto(client);
+        return mapToDto(savedClient);
     }
 
     @Override
@@ -64,9 +67,15 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
-    public ClientDTO getClientByBankAccountNumber(String bankAccountNumber) {
+    public ClientDTO getClientDTOByBankAccountNumber(String bankAccountNumber) {
         return mapToDto(clientRepository.findByBankAccountNumber(bankAccountNumber).orElseThrow(() ->
                 new ResourceNotFoundException("Client", "bankAccountNumber", bankAccountNumber)));
+    }
+
+    @Override
+    public Client getClientByBankAccountNumber(String bankAccountNumber) {
+        return clientRepository.findByBankAccountNumber(bankAccountNumber).orElseThrow(() ->
+                new ResourceNotFoundException("Client", "bankAccountNumber", bankAccountNumber));
     }
 
     @Override
@@ -78,28 +87,42 @@ public class ClientServiceImpl implements ClientService {
         Optional<Client> client1 = clientRepository.findByBankAccountNumber(accountFrom);
         Optional<Client> client2 = clientRepository.findByBankAccountNumber(accountTo);
 
-        if (client1.isEmpty() || client2.isEmpty()) {
-            throw new ClientsNotFoundException(accountFrom, accountTo);
+        if (client1.isEmpty() && client2.isEmpty()) {
+            throw new ResourceNotFoundException("Clients", "bankAccountNumber", accountFrom + " and " + accountTo);
         }
 
         return client1.get();
     }
 
-    private ClientDTO mapToDto(Client client) {
-        ClientDTO clientDTO = modelMapper.map(client, ClientDTO.class);
-
-        return clientDTO;
-    }
-
-    private Client mapToEntity(ClientDTO clientDTO) {
-        Client client = modelMapper.map(clientDTO, Client.class);
-
-        return client;
-    }
-
     private void enrichClient(Client client) {
         client.setClientLimits(new ArrayList<>());
         client.setClientTransactions(new ArrayList<>());
+        Arrays.stream(ExpenseCategoryType.values()).forEach(expenseCategoryType -> {
+            Limit defaultLimit = createDefaultLimit();
+            defaultLimit.setLimitExpenseCategory(expenseCategoryType);
+            limitRepository.save(defaultLimit);
+            defaultLimit.setLimitClient(client);
+            client.getClientLimits().add(defaultLimit);
+        });
+    }
+
+    private Limit createDefaultLimit() {
+        Limit defaultLimit = new Limit();
+        defaultLimit.setLimitSum(BigDecimal.ZERO);
+        defaultLimit.setLimitCurrencyShortname(CurrencyType.USD);
+        defaultLimit.setLimitDateTime(LocalDateTime.now());
+        defaultLimit.setRemainingMonthLimit(defaultLimit.getLimitSum());
+        defaultLimit.setLimitTransactions(new ArrayList<>());
+
+        return defaultLimit;
+    }
+
+    private ClientDTO mapToDto(Client client) {
+        return modelMapper.map(client, ClientDTO.class);
+    }
+
+    private Client mapToEntity(ClientDTO clientDTO) {
+        return modelMapper.map(clientDTO, Client.class);
     }
 
 }

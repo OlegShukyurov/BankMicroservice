@@ -1,7 +1,8 @@
 package com.shukyurov.BankMicroservice.service.impl;
 
 import com.shukyurov.BankMicroservice.client.ConversionClient;
-import com.shukyurov.BankMicroservice.exception.LastExchangeRateException;
+import com.shukyurov.BankMicroservice.exception.ExchangeRateException;
+import com.shukyurov.BankMicroservice.exception.ResourceNotFoundException;
 import com.shukyurov.BankMicroservice.mapper.ConversionMapper;
 import com.shukyurov.BankMicroservice.model.ExchangeType;
 import com.shukyurov.BankMicroservice.model.dto.ConversionDTO;
@@ -32,20 +33,19 @@ public class ConversionServiceImpl implements ConversionService {
 
     @Override
     public ConversionDTO getConversionDTO(String symbol, String apikey) {
-        return conversionClient.getConversionDTO(symbol, apikey);
+        ConversionDTO conversionDTO = conversionClient.getConversionDTO(symbol, apiKey);
+        if (conversionDTO == null) {
+            throw new ResourceNotFoundException("Conversion", "symbol and apiKey", symbol + " and " + apikey);
+        }
+        return conversionDTO;
     }
 
     @Override
     public BigDecimal getLastExchangeRate(String limitCurrencyType, String transactionCurrencyType) {
-        BigDecimal lastExchangeRate;
         ExchangeType symbol = ExchangeType.valueOf(limitCurrencyType + "_" + transactionCurrencyType);
-        Optional<Conversion> conversion = findTopBySymbolOrderByMadeAtDesc(symbol);
-
-        if (conversion.isPresent()) {
-            lastExchangeRate = conversion.get().getRate();
-        } else {
-            lastExchangeRate = BigDecimal.valueOf(getConversionDTO(symbol.getSymbol(), apiKey).getRate());
-        }
+        Conversion conversion = findTopBySymbolOrderByMadeAtDesc(symbol)
+                .orElse(conversionMapper.toEntity(getConversionDTO(symbol.getSymbol(), apiKey)));
+        BigDecimal lastExchangeRate = conversion.getRate();
         checkLastExchangeRate(lastExchangeRate);
 
         return lastExchangeRate;
@@ -78,7 +78,7 @@ public class ConversionServiceImpl implements ConversionService {
 
     private void checkLastExchangeRate(BigDecimal lastExchangeRate) {
         if (lastExchangeRate == null) {
-            throw new LastExchangeRateException();
+            throw new ExchangeRateException();
         }
     }
 

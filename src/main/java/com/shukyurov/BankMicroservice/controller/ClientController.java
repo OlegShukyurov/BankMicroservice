@@ -1,7 +1,7 @@
 package com.shukyurov.BankMicroservice.controller;
 
 import com.shukyurov.BankMicroservice.model.dto.ClientDTO;
-import com.shukyurov.BankMicroservice.service.impl.ClientServiceImpl;
+import com.shukyurov.BankMicroservice.service.ClientService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,27 +15,21 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ClientController {
 
-    private final ClientServiceImpl clientService;
+    private final ClientService clientService;
 
     @PostMapping("/add")
     public ResponseEntity<ClientDTO> addClient(@RequestBody @Valid ClientDTO clientDTO) {
-        ClientDTO clientResponse = clientService.addClient(clientDTO);
-
-        return new ResponseEntity<>(clientResponse, HttpStatus.OK);
+        return new ResponseEntity<>(clientService.addClient(clientDTO), HttpStatus.OK);
     }
 
     @GetMapping("/{bankAccountNumber}")
     public ResponseEntity<ClientDTO> getClientByBankAccountNumber(@PathVariable("bankAccountNumber") String bankAccountNumber) {
-        ClientDTO clientResponse = clientService.getClientByBankAccountNumber(bankAccountNumber);
-
-        return new ResponseEntity<>(clientResponse, HttpStatus.OK);
+        return new ResponseEntity<>(clientService.getClientDTOByBankAccountNumber(bankAccountNumber), HttpStatus.OK);
     }
 
     @GetMapping
     public ResponseEntity<List<ClientDTO>> getAllClients() {
-        List<ClientDTO> clientResponseList = clientService.getAllClients();
-
-        return new ResponseEntity<>(clientResponseList, HttpStatus.OK);
+        return new ResponseEntity<>(clientService.getAllClients(), HttpStatus.OK);
     }
 
 }

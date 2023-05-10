@@ -1,29 +1,38 @@
 package com.shukyurov.BankMicroservice.controller;
 
-import com.shukyurov.BankMicroservice.model.dto.TransactionDTO;
-import com.shukyurov.BankMicroservice.service.impl.TransactionServiceImpl;
+import com.shukyurov.BankMicroservice.model.dto.TransactionRequestDTO;
+import com.shukyurov.BankMicroservice.model.dto.TransactionResponseDTO;
+import com.shukyurov.BankMicroservice.service.TransactionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/transactions")
 public class TransactionController {
 
-    private final TransactionServiceImpl transactionService;
+    private final TransactionService transactionService;
 
     @PostMapping("/add")
-    public ResponseEntity<TransactionDTO> addTransaction(@RequestBody @Valid TransactionDTO transactionDTO) {
-        TransactionDTO transactionResponse = transactionService.addTransaction(transactionDTO);
+    public ResponseEntity<TransactionRequestDTO> addTransaction(@RequestBody @Valid TransactionRequestDTO transactionRequestDTO) {
+        return new ResponseEntity<>(transactionService.addTransaction(transactionRequestDTO), HttpStatus.OK);
+    }
 
-        return new ResponseEntity<>(transactionResponse, HttpStatus.OK);
+    @GetMapping("/getAll/{bankAccountNumber}")
+    public ResponseEntity<List<TransactionResponseDTO>> getAll(@PathVariable("bankAccountNumber") String bankAccountNumber) {
+        return new ResponseEntity<>(transactionService.getAll(bankAccountNumber), HttpStatus.OK);
+    }
+
+    @GetMapping("/getAllLimitExceeded/{bankAccountNumber}")
+    public ResponseEntity<List<TransactionResponseDTO>> getAllLimitExceeded(@PathVariable("bankAccountNumber") String bankAccountNumber,
+                                                                            @RequestParam(name = "currency", required = false) String currency,
+                                                                            @RequestParam(name = "expense", required = false) String expense) {
+        return new ResponseEntity<>(transactionService.getAllLimitExceeded(bankAccountNumber, currency, expense), HttpStatus.OK);
     }
 
 }

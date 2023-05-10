@@ -1,7 +1,7 @@
 package com.shukyurov.BankMicroservice.controller;
 
-import com.shukyurov.BankMicroservice.model.dto.LimitDTO;
-import com.shukyurov.BankMicroservice.service.impl.LimitServiceImpl;
+import com.shukyurov.BankMicroservice.model.dto.LimitRequestDTO;
+import com.shukyurov.BankMicroservice.service.LimitService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,14 +14,12 @@ import javax.validation.Valid;
 @RequiredArgsConstructor
 public class LimitController {
 
-    private final LimitServiceImpl limitService;
+    private final LimitService limitService;
 
     @PostMapping("/add/{bankAccountNumber}")
-    public ResponseEntity<LimitDTO> addLimitByBankAccountNumber(@PathVariable("bankAccountNumber") String bankAccountNumber,
-                                                                @RequestBody @Valid LimitDTO limitDTO) {
-        LimitDTO limitResponse = limitService.addLimitByBankAccountNumber(bankAccountNumber, limitDTO);
-
-        return new ResponseEntity<>(limitResponse, HttpStatus.OK);
+    public ResponseEntity<LimitRequestDTO> addLimitByBankAccountNumber(@PathVariable("bankAccountNumber") String bankAccountNumber,
+                                                                       @RequestBody @Valid LimitRequestDTO limitRequestDTO) {
+        return new ResponseEntity<>(limitService.addLimitByBankAccountNumber(bankAccountNumber, limitRequestDTO), HttpStatus.OK);
     }
 
 }

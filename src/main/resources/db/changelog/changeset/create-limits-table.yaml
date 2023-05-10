@@ -31,3 +31,6 @@ databaseChangeLog:
               - column:
                   name: limit_currency_shortname
                   type: varchar(255)
+              - column:
+                  name: limit_expense_category
+                  type: varchar(255)

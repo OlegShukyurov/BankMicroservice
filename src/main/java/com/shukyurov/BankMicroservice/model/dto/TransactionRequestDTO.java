@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class TransactionDTO {
+public class TransactionRequestDTO {
 
     @NotEmpty(message = "Account number should not be empty")
     @NotNull(message = "Account number should not be null")

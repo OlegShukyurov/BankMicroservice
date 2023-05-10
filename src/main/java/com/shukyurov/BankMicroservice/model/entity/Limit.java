@@ -1,5 +1,6 @@
 package com.shukyurov.BankMicroservice.model.entity;
 
+import com.shukyurov.BankMicroservice.model.ExpenseCategoryType;
 import lombok.*;
 import com.shukyurov.BankMicroservice.model.CurrencyType;
 
@@ -34,6 +35,10 @@ public class Limit {
     @NotNull(message = "Currency type should not be null")
     @Enumerated(EnumType.STRING)
     private CurrencyType limitCurrencyShortname;
+
+    @NotNull(message = "Expense category should not be null")
+    @Enumerated(EnumType.STRING)
+    private ExpenseCategoryType limitExpenseCategory;
 
     @JoinColumn(name = "client_id", referencedColumnName = "id")
     @ManyToOne
