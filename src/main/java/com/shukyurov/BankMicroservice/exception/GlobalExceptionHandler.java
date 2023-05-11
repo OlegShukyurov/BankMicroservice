@@ -62,4 +62,11 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(SumIncorrectValueException.class)
+    public ResponseEntity<ErrorDetails> handleSumIncorrectValueException(SumIncorrectValueException ex) {
+        ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(), ex.getMessage());
+
+        return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
+    }
+
 }

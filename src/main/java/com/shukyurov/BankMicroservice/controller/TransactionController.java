@@ -24,15 +24,15 @@ public class TransactionController {
     }
 
     @GetMapping("/getAll/{bankAccountNumber}")
-    public ResponseEntity<List<TransactionResponseDTO>> getAll(@PathVariable("bankAccountNumber") String bankAccountNumber) {
-        return new ResponseEntity<>(transactionService.getAll(bankAccountNumber), HttpStatus.OK);
+    public ResponseEntity<List<TransactionResponseDTO>> getAllTransactions(@PathVariable("bankAccountNumber") String bankAccountNumber) {
+        return new ResponseEntity<>(transactionService.getAllTransactions(bankAccountNumber), HttpStatus.OK);
     }
 
     @GetMapping("/getAllLimitExceeded/{bankAccountNumber}")
-    public ResponseEntity<List<TransactionResponseDTO>> getAllLimitExceeded(@PathVariable("bankAccountNumber") String bankAccountNumber,
-                                                                            @RequestParam(name = "currency", required = false) String currency,
-                                                                            @RequestParam(name = "expense", required = false) String expense) {
-        return new ResponseEntity<>(transactionService.getAllLimitExceeded(bankAccountNumber, currency, expense), HttpStatus.OK);
+    public ResponseEntity<List<TransactionResponseDTO>> getAllLimitExceededTransactions(@PathVariable("bankAccountNumber") String bankAccountNumber,
+                                                                                        @RequestParam(name = "currency", required = false) String currency,
+                                                                                        @RequestParam(name = "expense", required = false) String expense) {
+        return new ResponseEntity<>(transactionService.getAllLimitExceededTransactions(bankAccountNumber, currency, expense), HttpStatus.OK);
     }
 
 }

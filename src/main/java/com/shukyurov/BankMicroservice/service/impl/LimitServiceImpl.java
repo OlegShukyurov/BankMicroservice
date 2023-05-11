@@ -1,9 +1,12 @@
 package com.shukyurov.BankMicroservice.service.impl;
 
 import com.shukyurov.BankMicroservice.exception.ResourceNotFoundException;
+import com.shukyurov.BankMicroservice.exception.SumIncorrectValueException;
 import com.shukyurov.BankMicroservice.mapper.LimitRequestMapper;
+import com.shukyurov.BankMicroservice.mapper.LimitResponseMapper;
 import com.shukyurov.BankMicroservice.model.ExpenseCategoryType;
 import com.shukyurov.BankMicroservice.model.dto.LimitRequestDTO;
+import com.shukyurov.BankMicroservice.model.dto.LimitResponseDTO;
 import com.shukyurov.BankMicroservice.model.entity.Client;
 import com.shukyurov.BankMicroservice.model.entity.Limit;
 import com.shukyurov.BankMicroservice.model.entity.Transaction;
@@ -20,10 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -36,6 +36,7 @@ public class LimitServiceImpl implements LimitService {
     private final LimitRequestMapper limitRequestMapper;
     private final ConversionService conversionService;
     private final ClientRepository clientRepository;
+    private final LimitResponseMapper limitResponseMapper;
 
     @Override
     @Transactional
@@ -64,18 +65,45 @@ public class LimitServiceImpl implements LimitService {
 
     @Override
     @Transactional
+    public LimitResponseDTO increaseLimitByBankAccountNumber(String bankAccountNumber, String expense, Double sum) {
+        Client client = clientService.getClientByBankAccountNumber(bankAccountNumber);
+        Limit lastLimit = limitRepository.findLastLimitByClientIdAndExpenseCategory(client.getId(), expense.toUpperCase())
+                .orElseThrow(() -> new ResourceNotFoundException("Limit", "expenseCategory", expense));
+        checkSum(sum);
+        lastLimit.setLimitSum(lastLimit.getLimitSum().add(BigDecimal.valueOf(sum)).setScale(2, RoundingMode.HALF_UP));
+        lastLimit.setRemainingMonthLimit(lastLimit.getRemainingMonthLimit().add(BigDecimal.valueOf(sum)).setScale(2, RoundingMode.HALF_UP));
+        lastLimit.setLimitDateTime(LocalDateTime.now());
+
+        return limitResponseMapper.toDto(lastLimit);
+    }
+
+    @Override
+    public List<LimitResponseDTO> getAllLimitsByBankAccountNumber(String bankAccountNumber, String expense) {
+        Client client = clientService.getClientByBankAccountNumber(bankAccountNumber);
+        List<Limit> limits;
+        boolean expenseIsCorrect = Arrays.stream(ExpenseCategoryType.values())
+                .anyMatch(ect -> Objects.equals(ect.getExpenseCategoryType(), expense));
+        if (expenseIsCorrect) {
+            limits = limitRepository.findAllByLimitClientAndLimitExpenseCategory(client, ExpenseCategoryType.valueOf(expense.toUpperCase()));
+        } else {
+            limits = limitRepository.findAllByLimitClient(client);
+        }
+
+        return limits.stream().map(limitResponseMapper::toDto).collect(Collectors.toList());
+    }
+
+    @Transactional
     @Scheduled(cron = "${spring.client.cron}")
     public void updateAllLastLimits() {
         System.out.println("Update limits start");
-        List<Client> clients = clientRepository.findAll().stream().collect(Collectors.toList());
-        clients.forEach(client -> {
-            Arrays.stream(ExpenseCategoryType.values()).forEach(expenseCategoryType -> {
-                Optional<Limit> lastLimit = limitRepository.findLastLimitByClientIdAndExpenseCategory(client.getId(), expenseCategoryType.toString());
-                lastLimit.ifPresent(this::updateLimitDateTime);
-            });
-        });
+        List<Client> clients = new ArrayList<>(clientRepository.findAll());
+        clients.forEach(client -> Arrays.stream(ExpenseCategoryType.values()).forEach(expenseCategoryType -> {
+            Optional<Limit> lastLimit = limitRepository.findLastLimitByClientIdAndExpenseCategory(client.getId(), expenseCategoryType.toString());
+            lastLimit.ifPresent(this::updateLimitDateTime);
+        }));
         System.out.println("Update limits end");
     }
+
 
     private void updateLimitDateTime(Limit limit) {
         LocalDateTime now = LocalDateTime.now();
@@ -89,6 +117,12 @@ public class LimitServiceImpl implements LimitService {
         if (limit.getLimitSum().compareTo(BigDecimal.ZERO) > 0) {
             BigDecimal newRemainingMonthLimit = limit.getRemainingMonthLimit().subtract(transactionSum.divide(lastExchangeRate, 2, RoundingMode.HALF_UP));
             limit.setRemainingMonthLimit(newRemainingMonthLimit);
+        }
+    }
+
+    private void checkSum(Double sum) {
+        if (sum.compareTo(0d) <= 0) {
+            throw new SumIncorrectValueException(sum);
         }
     }
 

@@ -9,8 +9,8 @@ public interface TransactionService {
 
     TransactionRequestDTO addTransaction(TransactionRequestDTO transactionRequestDTO);
 
-    List<TransactionResponseDTO> getAll(String bankAccountNumber);
+    List<TransactionResponseDTO> getAllTransactions(String bankAccountNumber);
 
-    List<TransactionResponseDTO> getAllLimitExceeded(String bankAccountNumber, String currency, String expense);
+    List<TransactionResponseDTO> getAllLimitExceededTransactions(String bankAccountNumber, String currency, String expense);
 
 }

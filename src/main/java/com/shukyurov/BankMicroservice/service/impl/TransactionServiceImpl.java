@@ -46,7 +46,7 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public List<TransactionResponseDTO> getAllLimitExceeded(String bankAccountNumber, String currency, String expense) {
+    public List<TransactionResponseDTO> getAllLimitExceededTransactions(String bankAccountNumber, String currency, String expense) {
         Client client = clientService.getClientByBankAccountNumber(bankAccountNumber);
         List<Transaction> limitExceededTransactionList;
         boolean currencyIsCorrect = Arrays.stream(CurrencyType.values())
@@ -69,7 +69,7 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public List<TransactionResponseDTO> getAll(String bankAccountNumber) {
+    public List<TransactionResponseDTO> getAllTransactions(String bankAccountNumber) {
         return transactionRepository.findAllByTransactionClient(clientService.getClientByBankAccountNumber(bankAccountNumber))
                 .stream()
                 .map(transactionResponseMapper::toDto)

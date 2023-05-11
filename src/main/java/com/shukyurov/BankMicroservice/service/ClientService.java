@@ -21,5 +21,4 @@ public interface ClientService {
 
     Limit addLimitToClient(String bankAccountNumber, Limit limit);
 
-
 }
