@@ -1,13 +1,15 @@
 package com.shukyurov.BankMicroservice.service.impl;
 
 import com.shukyurov.BankMicroservice.client.ConversionClient;
+import com.shukyurov.BankMicroservice.exception.ExchangeRateException;
+import com.shukyurov.BankMicroservice.exception.ResourceNotFoundException;
 import com.shukyurov.BankMicroservice.mapper.ConversionMapper;
 import com.shukyurov.BankMicroservice.model.ExchangeType;
 import com.shukyurov.BankMicroservice.model.dto.ConversionDTO;
 import com.shukyurov.BankMicroservice.model.entity.Conversion;
 import com.shukyurov.BankMicroservice.repository.ConversionRepository;
 import com.shukyurov.BankMicroservice.service.ConversionService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -19,6 +21,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class ConversionServiceImpl implements ConversionService {
 
     @Value("${spring.client.apikey}")
@@ -28,17 +31,24 @@ public class ConversionServiceImpl implements ConversionService {
     private final ConversionClient conversionClient;
     private final ConversionRepository conversionRepository;
 
-    @Autowired
-    public ConversionServiceImpl(ConversionMapper conversionMapper, ConversionClient conversionClient,
-                                 ConversionRepository conversionRepository) {
-        this.conversionMapper = conversionMapper;
-        this.conversionClient = conversionClient;
-        this.conversionRepository = conversionRepository;
+    @Override
+    public ConversionDTO getConversionDTO(String symbol, String apikey) {
+        ConversionDTO conversionDTO = conversionClient.getConversionDTO(symbol, apiKey);
+        if (conversionDTO == null) {
+            throw new ResourceNotFoundException("Conversion", "symbol and apiKey", symbol + " and " + apikey);
+        }
+        return conversionDTO;
     }
 
     @Override
-    public ConversionDTO getConversionDTO(String symbol, String apikey) {
-        return conversionClient.getConversionDTO(symbol, apikey);
+    public BigDecimal getLastExchangeRate(String limitCurrencyType, String transactionCurrencyType) {
+        ExchangeType symbol = ExchangeType.valueOf(limitCurrencyType + "_" + transactionCurrencyType);
+        Conversion conversion = findTopBySymbolOrderByMadeAtDesc(symbol)
+                .orElse(conversionMapper.toEntity(getConversionDTO(symbol.getSymbol(), apiKey)));
+        BigDecimal lastExchangeRate = conversion.getRate();
+        checkLastExchangeRate(lastExchangeRate);
+
+        return lastExchangeRate;
     }
 
     @PostConstruct
@@ -64,6 +74,12 @@ public class ConversionServiceImpl implements ConversionService {
 
     private Optional<Conversion> findTopBySymbolOrderByMadeAtDesc(ExchangeType symbol) {
         return conversionRepository.findTopBySymbolOrderByMadeAtDesc(symbol);
+    }
+
+    private void checkLastExchangeRate(BigDecimal lastExchangeRate) {
+        if (lastExchangeRate == null) {
+            throw new ExchangeRateException();
+        }
     }
 
 }

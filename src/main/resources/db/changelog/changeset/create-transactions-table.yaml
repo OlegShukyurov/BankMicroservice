@@ -1,0 +1,49 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-transactions
+      author: Oleg Shukyurov
+      changes:
+        - createTable:
+            tableName: transactions
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: client_id
+                  type: bigint
+                  constraints:
+                    foreignKeyName: client_transaction_fk
+                    referencedTableName: clients
+                    referencedColumnNames: id
+              - column:
+                  name: limit_id
+                  type: bigint
+                  constraints:
+                    foreignKeyName: limit_transaction_fk
+                    referencedTableName: limits
+                    referencedColumnNames: id
+              - column:
+                  name: account_from
+                  type: varchar(255)
+              - column:
+                  name: account_to
+                  type: varchar(255)
+              - column:
+                  name: datetime
+                  type: timestamp
+              - column:
+                  name: currency_shortname
+                  type: varchar(255)
+              - column:
+                  name: expense_category
+                  type: varchar(255)
+              - column:
+                  name: sum
+                  type: decimal(19, 2)
+              - column:
+                  name: limit_exceeded
+                  type: boolean
