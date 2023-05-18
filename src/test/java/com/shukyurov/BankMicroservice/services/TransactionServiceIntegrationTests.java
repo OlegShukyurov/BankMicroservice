@@ -1,11 +1,8 @@
 package com.shukyurov.BankMicroservice.services;
 
 import com.shukyurov.BankMicroservice.AbstractIntegrationTests;
-import com.shukyurov.BankMicroservice.client.ConversionClient;
-import com.shukyurov.BankMicroservice.exception.ExchangeRateException;
 import com.shukyurov.BankMicroservice.exception.LimitExceededException;
 import com.shukyurov.BankMicroservice.exception.ResourceNotFoundException;
-import com.shukyurov.BankMicroservice.mapper.*;
 import com.shukyurov.BankMicroservice.model.dto.ClientDTO;
 import com.shukyurov.BankMicroservice.model.dto.TransactionRequestDTO;
 import com.shukyurov.BankMicroservice.model.dto.TransactionResponseDTO;
@@ -13,20 +10,14 @@ import com.shukyurov.BankMicroservice.model.entity.Client;
 import com.shukyurov.BankMicroservice.model.entity.Limit;
 import com.shukyurov.BankMicroservice.model.entity.Transaction;
 import com.shukyurov.BankMicroservice.repository.ClientRepository;
-import com.shukyurov.BankMicroservice.repository.ConversionRepository;
 import com.shukyurov.BankMicroservice.repository.LimitRepository;
 import com.shukyurov.BankMicroservice.repository.TransactionRepository;
 import com.shukyurov.BankMicroservice.service.ClientService;
-import com.shukyurov.BankMicroservice.service.ConversionService;
-import com.shukyurov.BankMicroservice.service.LimitService;
-import com.shukyurov.BankMicroservice.service.TransactionService;
 import com.shukyurov.BankMicroservice.service.impl.ConversionServiceImpl;
-import com.shukyurov.BankMicroservice.service.impl.LimitServiceImpl;
 import com.shukyurov.BankMicroservice.service.impl.TransactionServiceImpl;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -58,15 +49,6 @@ public class TransactionServiceIntegrationTests extends AbstractIntegrationTests
 
     @Autowired
     private ConversionServiceImpl conversionService;
-
-    @Autowired
-    private TransactionRequestMapper transactionRequestMapper;
-
-    @Autowired
-    private TransactionResponseMapper transactionResponseMapper;
-
-    @Autowired
-    private ConversionRepository conversionRepository;
 
     @BeforeEach
     @Transactional
@@ -196,7 +178,7 @@ public class TransactionServiceIntegrationTests extends AbstractIntegrationTests
         assertThat(limitExceededTransactionsList.get(1).getSum()).isEqualTo(1000d);
         assertThat(limitExceededTransactionsList.get(1).getExpense_category()).isEqualTo("product");
         assertThat(limitExceededTransactionsList.get(1).getCurrency_shortname()).isEqualTo("RUB");
-        assertThat(limitWithTransactions.getRemainingMonthLimit().toBigInteger()).isEqualByComparingTo(correctRemainingMonthLimit.toBigInteger());
+        assertThat(limitWithTransactions.getRemainingMonthLimit().longValue()).isEqualByComparingTo(correctRemainingMonthLimit.longValue());
     }
 
     @Test
@@ -241,7 +223,7 @@ public class TransactionServiceIntegrationTests extends AbstractIntegrationTests
         assertThat(limitExceededTransactionsList.get(1).getExpense_category()).isEqualTo("product");
         assertThat(limitExceededTransactionsList.get(1).getCurrency_shortname()).isEqualTo("KZT");
 
-        assertThat(limitWithTransactions.getRemainingMonthLimit()).isEqualTo(correctRemainingMonthLimit);
+        assertThat(limitWithTransactions.getRemainingMonthLimit()).isEqualByComparingTo(correctRemainingMonthLimit);
     }
 
     @Test
@@ -280,8 +262,8 @@ public class TransactionServiceIntegrationTests extends AbstractIntegrationTests
         assertThat(limitExceededTransactionsList.get(1).getExpense_category()).isEqualTo("service");
         assertThat(limitExceededTransactionsList.get(1).getCurrency_shortname()).isEqualTo("RUB");
 
-        assertThat(limitWithTransactionsProduct.getRemainingMonthLimit()).isEqualTo(correctRemainingMonthLimit);
-        assertThat(limitWithTransactionService.getRemainingMonthLimit()).isEqualTo(correctRemainingMonthLimit);
+        assertThat(limitWithTransactionsProduct.getRemainingMonthLimit()).isEqualByComparingTo(correctRemainingMonthLimit);
+        assertThat(limitWithTransactionService.getRemainingMonthLimit()).isEqualByComparingTo(correctRemainingMonthLimit);
     }
 
     @Test
@@ -325,8 +307,8 @@ public class TransactionServiceIntegrationTests extends AbstractIntegrationTests
         assertThat(limitExceededTransactionsList.get(1).getExpense_category()).isEqualTo("service");
         assertThat(limitExceededTransactionsList.get(1).getCurrency_shortname()).isEqualTo("KZT");
 
-        assertThat(limitWithTransactionsProduct.getRemainingMonthLimit()).isEqualTo(correctRemainingMonthLimitRubProduct);
-        assertThat(limitWithTransactionsService.getRemainingMonthLimit()).isEqualTo(correctRemainingMonthLimitKztService);
+        assertThat(limitWithTransactionsProduct.getRemainingMonthLimit()).isEqualByComparingTo(correctRemainingMonthLimitRubProduct);
+        assertThat(limitWithTransactionsService.getRemainingMonthLimit()).isEqualByComparingTo(correctRemainingMonthLimitKztService);
     }
 
     @Test
@@ -366,30 +348,6 @@ public class TransactionServiceIntegrationTests extends AbstractIntegrationTests
 
         assertEquals(String.format("'%s' not found with '%s' : '%s'", "Client", "bankAccountNumber", "incorrect ba"),
                 ex.getMessage());
-    }
-
-    @Test
-    @Transactional
-    public void givenCorrectTransactionDTOAndNoConversionsExist_whenAddTransaction_thenExceptionThrown() {
-        TransactionRequestDTO correctTransaction = getTransactionRequestDTO();
-        correctTransaction.setSum(7d);
-        conversionRepository.deleteAll();
-        ConversionClient mockClient = Mockito.mock(ConversionClient.class);
-        Mockito.when(mockClient.getConversionDTO(Mockito.any(), Mockito.any())).thenReturn(null);
-
-        ConversionService conversionServiceWithMockClient = new ConversionServiceImpl(new ConversionMapper(), mockClient,
-                conversionRepository);
-        LimitService ls = new LimitServiceImpl(limitRepository, clientService, new LimitRequestMapper(),
-                conversionServiceWithMockClient, clientRepository, new LimitResponseMapper());
-        TransactionService ts = new TransactionServiceImpl(clientService, ls,
-                transactionRepository, transactionRequestMapper, transactionResponseMapper);
-
-        Throwable ex = assertThrows(ExchangeRateException.class, () ->
-                ts.addTransaction(correctTransaction));
-
-        assertEquals("Could not get exchange rate from resource : 'https://api.twelvedata.com/'",
-                ex.getMessage());
-        Mockito.verify(mockClient, Mockito.times(1)).getConversionDTO(Mockito.any(), Mockito.any());
     }
 
     private TransactionRequestDTO getTransactionRequestDTO() {

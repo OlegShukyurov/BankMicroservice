@@ -5,6 +5,7 @@ import com.shukyurov.BankMicroservice.model.ExpenseCategoryType;
 import com.shukyurov.BankMicroservice.model.dto.TransactionResponseDTO;
 import com.shukyurov.BankMicroservice.model.entity.Transaction;
 import com.shukyurov.BankMicroservice.util.Converters;
+import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeMap;
 import org.springframework.stereotype.Component;
 
@@ -15,7 +16,7 @@ import java.time.LocalDateTime;
 public class TransactionResponseMapper extends AbstractMapper<Transaction, TransactionResponseDTO> {
 
     public TransactionResponseMapper() {
-        super(Transaction.class, TransactionResponseDTO.class);
+        super(new ModelMapper(), Transaction.class, TransactionResponseDTO.class);
     }
 
     @Override

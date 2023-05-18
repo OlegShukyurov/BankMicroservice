@@ -1,22 +1,17 @@
 package com.shukyurov.BankMicroservice.mapper;
 
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeMap;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
+@RequiredArgsConstructor
 public abstract class AbstractMapper <E, D> {
 
-    @Autowired
-    private ModelMapper modelMapper;
-    private Class<E> entityClass;
-    private Class<D> dtoClass;
-
-    public AbstractMapper(Class<E> entityClass, Class<D> dtoClass) {
-        this.entityClass = entityClass;
-        this.dtoClass = dtoClass;
-    }
+    private final ModelMapper modelMapper;
+    private final Class<E> entityClass;
+    private final Class<D> dtoClass;
 
     public abstract D toDto(E entity);
 

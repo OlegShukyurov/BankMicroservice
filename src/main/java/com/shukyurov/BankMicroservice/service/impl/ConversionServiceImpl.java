@@ -34,7 +34,7 @@ public class ConversionServiceImpl implements ConversionService {
     @Override
     public ConversionDTO getConversionDTO(String symbol, String apikey) {
         ConversionDTO conversionDTO = conversionClient.getConversionDTO(symbol, apiKey);
-        if (conversionDTO == null) {
+        if (conversionDTO == null || conversionDTO.getRate() == null || conversionDTO.getSymbol() == null || conversionDTO.getTimestamp() == null) {
             throw new ExchangeRateException();
         }
         return conversionDTO;

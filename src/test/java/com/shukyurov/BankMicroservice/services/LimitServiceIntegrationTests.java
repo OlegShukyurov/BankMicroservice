@@ -21,6 +21,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
@@ -169,7 +170,7 @@ public class LimitServiceIntegrationTests extends AbstractIntegrationTests {
         Throwable ex = assertThrows(SumIncorrectValueException.class, () ->
                 limitService.increaseLimitByBankAccountNumber("1234567890", "product", -10d));
 
-        assertEquals(String.format("Sum to increase or decrease limit is incorrect : '%s'", Double.valueOf(-10)), ex.getMessage());
+        assertEquals(String.format("Sum to increase or decrease limit is incorrect : '%s'", -10d), ex.getMessage());
     }
 
     @Test
@@ -192,7 +193,7 @@ public class LimitServiceIntegrationTests extends AbstractIntegrationTests {
     }
 
     @Test
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRED)
     public void givenLimitAndCorrectClientAndExpense_whenGetAllLimitsByBankAccountNumber_thenListReturned() {
         List<LimitResponseDTO> listWithOneProductLimit = limitService
                 .getAllLimitsByBankAccountNumber("1234567890", "product");
@@ -203,7 +204,7 @@ public class LimitServiceIntegrationTests extends AbstractIntegrationTests {
     }
 
     @Test
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRED)
     public void givenTwoLimitsAndClientAndNoExpense_whenGetAllLimitsByBankAccountNumber_thenListReturned() {
         List<LimitResponseDTO> listWithTwoDifferentByExpenseLimits = limitService
                 .getAllLimitsByBankAccountNumber("1234567890", "incorrect expense");
@@ -211,7 +212,7 @@ public class LimitServiceIntegrationTests extends AbstractIntegrationTests {
         assertThat(listWithTwoDifferentByExpenseLimits).isNotEmpty().hasSize(2)
                 .extracting(LimitResponseDTO::getLimit_expense_category).containsOnly("product", "service");
         assertThat(listWithTwoDifferentByExpenseLimits)
-                .extracting(LimitResponseDTO::getLimit_sum).containsOnly(Double.valueOf(10), Double.valueOf(10));
+                .extracting(LimitResponseDTO::getLimit_sum).containsOnly(10d, 10d);
     }
 
     @Test

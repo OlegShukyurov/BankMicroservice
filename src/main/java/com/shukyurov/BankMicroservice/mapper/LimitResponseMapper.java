@@ -3,6 +3,7 @@ package com.shukyurov.BankMicroservice.mapper;
 import com.shukyurov.BankMicroservice.model.dto.LimitResponseDTO;
 import com.shukyurov.BankMicroservice.model.entity.Limit;
 import com.shukyurov.BankMicroservice.util.Converters;
+import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeMap;
 import org.springframework.stereotype.Component;
 
@@ -10,7 +11,7 @@ import org.springframework.stereotype.Component;
 public class LimitResponseMapper extends AbstractMapper<Limit, LimitResponseDTO> {
 
     public LimitResponseMapper() {
-        super(Limit.class, LimitResponseDTO.class);
+        super(new ModelMapper(), Limit.class, LimitResponseDTO.class);
     }
 
     @Override
