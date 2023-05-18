@@ -2,7 +2,6 @@ package com.shukyurov.BankMicroservice.service.impl;
 
 import com.shukyurov.BankMicroservice.client.ConversionClient;
 import com.shukyurov.BankMicroservice.exception.ExchangeRateException;
-import com.shukyurov.BankMicroservice.exception.ResourceNotFoundException;
 import com.shukyurov.BankMicroservice.mapper.ConversionMapper;
 import com.shukyurov.BankMicroservice.model.ExchangeType;
 import com.shukyurov.BankMicroservice.model.dto.ConversionDTO;
@@ -16,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.UUID;
@@ -35,7 +35,7 @@ public class ConversionServiceImpl implements ConversionService {
     public ConversionDTO getConversionDTO(String symbol, String apikey) {
         ConversionDTO conversionDTO = conversionClient.getConversionDTO(symbol, apiKey);
         if (conversionDTO == null) {
-            throw new ResourceNotFoundException("Conversion", "symbol and apiKey", symbol + " and " + apikey);
+            throw new ExchangeRateException();
         }
         return conversionDTO;
     }
@@ -43,17 +43,16 @@ public class ConversionServiceImpl implements ConversionService {
     @Override
     public BigDecimal getLastExchangeRate(String limitCurrencyType, String transactionCurrencyType) {
         ExchangeType symbol = ExchangeType.valueOf(limitCurrencyType + "_" + transactionCurrencyType);
-        Conversion conversion = findTopBySymbolOrderByMadeAtDesc(symbol)
-                .orElse(conversionMapper.toEntity(getConversionDTO(symbol.getSymbol(), apiKey)));
-        BigDecimal lastExchangeRate = conversion.getRate();
-        checkLastExchangeRate(lastExchangeRate);
-
-        return lastExchangeRate;
+        Optional<Conversion> conversion = findTopBySymbolOrderByMadeAtDesc(symbol);
+        if (conversion.isPresent()) {
+            return conversion.get().getRate();
+        }
+        return BigDecimal.valueOf(getConversionDTO(symbol.getSymbol(), apiKey).getRate()).setScale(2, RoundingMode.HALF_UP);
     }
 
     @PostConstruct
     @Scheduled(cron = "${spring.client.cron}")
-    private void saveAllConversions() {
+    public void saveAllConversions() {
         System.out.println("Save all starts");
         Arrays.stream(ExchangeType.values())
                 .map(exchangeType -> getConversionDTO(exchangeType.getSymbol(), apiKey))
@@ -74,12 +73,6 @@ public class ConversionServiceImpl implements ConversionService {
 
     private Optional<Conversion> findTopBySymbolOrderByMadeAtDesc(ExchangeType symbol) {
         return conversionRepository.findTopBySymbolOrderByMadeAtDesc(symbol);
-    }
-
-    private void checkLastExchangeRate(BigDecimal lastExchangeRate) {
-        if (lastExchangeRate == null) {
-            throw new ExchangeRateException();
-        }
     }
 
 }

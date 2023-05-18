@@ -69,7 +69,7 @@ public class ClientServiceImpl implements ClientService {
     @Override
     public ClientDTO getClientDTOByBankAccountNumber(String bankAccountNumber) {
         return mapToDto(clientRepository.findByBankAccountNumber(bankAccountNumber).orElseThrow(() ->
-                new ResourceNotFoundException("Client", "bankAccountNumber", bankAccountNumber)));
+                new ResourceNotFoundException("ClientDTO", "bankAccountNumber", bankAccountNumber)));
     }
 
     @Override
@@ -87,7 +87,7 @@ public class ClientServiceImpl implements ClientService {
         Optional<Client> client1 = clientRepository.findByBankAccountNumber(accountFrom);
         Optional<Client> client2 = clientRepository.findByBankAccountNumber(accountTo);
 
-        if (client1.isEmpty() && client2.isEmpty()) {
+        if ((client1.isEmpty() && client2.isEmpty()) || (client1.isEmpty() && client2.isPresent()) || (client1.isPresent() && client2.isEmpty())) {
             throw new ResourceNotFoundException("Clients", "bankAccountNumber", accountFrom + " and " + accountTo);
         }
 
