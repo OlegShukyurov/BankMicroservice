@@ -4,6 +4,7 @@ import com.shukyurov.BankMicroservice.model.CurrencyType;
 import com.shukyurov.BankMicroservice.model.ExchangeType;
 import com.shukyurov.BankMicroservice.model.ExpenseCategoryType;
 import org.modelmapper.Converter;
+import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -11,7 +12,8 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 
-public class Converters {
+@Component
+public final class Converters {
 
     public static Converter<Double, BigDecimal> doubleToDecimalConverter() {
         return mappingContext -> {

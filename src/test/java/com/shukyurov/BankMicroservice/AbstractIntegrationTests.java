@@ -1,19 +1,22 @@
 package com.shukyurov.BankMicroservice;
 
 import org.junit.jupiter.api.BeforeAll;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.CassandraContainer;
 import org.testcontainers.containers.PostgreSQLContainer;
 
-public class AbstractIntegrationTests {
+@SpringBootTest
+public abstract class AbstractIntegrationTests {
 
     private static final int CASSANDRA_PORT = 9042;
+    private static final String KEYSPACE_NAME = "test";
 
-    private static final PostgreSQLContainer postgresContainer = (PostgreSQLContainer) new PostgreSQLContainer("postgres:13")
+    private static final PostgreSQLContainer postgresContainer = (PostgreSQLContainer) new PostgreSQLContainer("postgres:latest")
             .withReuse(true);
 
-    private static final CassandraContainer cassandraContainer = (CassandraContainer) new CassandraContainer("cassandra:4.1")
+    private static final CassandraContainer cassandraContainer = (CassandraContainer) new CassandraContainer("cassandra:latest")
             .withInitScript("init-cassandra-test-container.cql")
             .withReuse(true);
 
@@ -21,6 +24,8 @@ public class AbstractIntegrationTests {
     public static void setUp() {
         postgresContainer.start();
         cassandraContainer.start();
+        System.setProperty("spring.datasource.cassandra.jdbcUrl", "jdbc:cassandra://127.0.0.1:" + cassandraContainer.getContactPoint().getPort() + ";DefaultKeyspace=test;AuthMech=1");
+        System.setProperty("spring.data.cassandra.keyspace-name", KEYSPACE_NAME);
     }
 
     @DynamicPropertySource

@@ -6,7 +6,7 @@
 
     <changeSet id="create-conversions" author="Oleg Shukyurov">
         <sql>
-            CREATE TABLE my_keyspace.conversions (
+            CREATE TABLE conversions (
             id uuid,
             symbol text,
             rate decimal,

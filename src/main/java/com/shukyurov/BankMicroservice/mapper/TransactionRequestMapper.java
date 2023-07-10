@@ -3,6 +3,7 @@ package com.shukyurov.BankMicroservice.mapper;
 import com.shukyurov.BankMicroservice.model.dto.TransactionRequestDTO;
 import com.shukyurov.BankMicroservice.model.entity.Transaction;
 import com.shukyurov.BankMicroservice.util.Converters;
+import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeMap;
 import org.springframework.stereotype.Component;
 
@@ -10,7 +11,7 @@ import org.springframework.stereotype.Component;
 public class TransactionRequestMapper extends AbstractMapper<Transaction, TransactionRequestDTO> {
 
     public TransactionRequestMapper() {
-        super(Transaction.class, TransactionRequestDTO.class);
+        super(new ModelMapper(), Transaction.class, TransactionRequestDTO.class);
     }
 
     @Override

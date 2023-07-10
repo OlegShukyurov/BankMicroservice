@@ -78,6 +78,7 @@ public class LimitServiceImpl implements LimitService {
     }
 
     @Override
+    @Transactional
     public List<LimitResponseDTO> getAllLimitsByBankAccountNumber(String bankAccountNumber, String expense) {
         Client client = clientService.getClientByBankAccountNumber(bankAccountNumber);
         List<Limit> limits;
